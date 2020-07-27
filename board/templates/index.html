@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/canvas.css' %}">
+        <title>Drawing Board</title>
+    </head>
+
+    <body>
+
+        <h1>This is a Heading</h1>
+        
+        <div id="canvas-div" class="Canvas">
+            <canvas id="canvas-canvas" width=500 height=350>
+        </div>
+
+        <script type="module">
+            import {initialize} from "{% static 'js/index.js' %}"
+            initialize();
+        </script>
+    </body>
+</html>
