@@ -3,7 +3,9 @@ import {drawLines, fillCell} from './draw.js'
 
 var NUM_CELLS_X = null;
 var NUM_CELLS_Y = null;
+var BOARD = null;
 var DRAWING = false;
+var CUR_COLOR = '#000000'
 
 const initialize = async () => {
     const canvas = document.getElementById('canvas-canvas');
@@ -17,10 +19,11 @@ const setupWebSocket = (canvas) => {
     socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
         if (data.type === 'initialize_board'){
-            setupBoard(data.width, data.height, socket)
+            setupBoard(data.width, data.height, data.board, socket);
         }
         else if (data.type === 'fill_cell'){
-            fillCell(data.x, data.y, data.color, canvas, NUM_CELLS_X, NUM_CELLS_Y)
+            BOARD[data.y][data.x] = data.color;
+            fillCell(data.x, data.y, data.color, canvas, NUM_CELLS_X, NUM_CELLS_Y);
         }
     };
 
@@ -29,41 +32,53 @@ const setupWebSocket = (canvas) => {
     };
 }
 
-const setupBoard = (width, height, socket) => {
+const setupBoard = (width, height, board, socket) => {
     NUM_CELLS_X = width;
     NUM_CELLS_Y = height;
+    BOARD = board;
     const canvas = document.getElementById('canvas-canvas');
-    setupDrawingListeners(canvas, socket);
+    for (var i = 0; i < BOARD.length; i++){
+        for (var j = 0; j < BOARD[0].length; j++){
+            fillCell(j, i, BOARD[i][j], canvas, NUM_CELLS_X, NUM_CELLS_Y)
+        }
+    }
     drawLines(canvas, NUM_CELLS_X, NUM_CELLS_Y);
+    setupDrawingListeners(canvas, socket);
 }
 
 const setupDrawingListeners = (canvas, socket) => {
-    canvas.addEventListener("mousedown", function (e) {
+    canvas.addEventListener("mousedown", async function (e) {
         DRAWING = true;
         const coord = getMousePos(canvas, e, NUM_CELLS_X, NUM_CELLS_Y);
-        socket.send(JSON.stringify({
-            'type': 'fill_cell',
-            'x': coord.x,
-            'y': coord.y,
-            'color': '(0, 0, 0)'
-        }));
-        fillCell(coord.x, coord.y, '(0, 0, 0)', canvas, NUM_CELLS_X, NUM_CELLS_Y);
+        if (BOARD[coord.y][coord.x] !== CUR_COLOR){
+            BOARD[coord.y][coord.x] = CUR_COLOR
+            socket.send(JSON.stringify({
+                'type': 'fill_cell',
+                'x': coord.x,
+                'y': coord.y,
+                'color': CUR_COLOR
+            }));
+            fillCell(coord.x, coord.y, CUR_COLOR, canvas, NUM_CELLS_X, NUM_CELLS_Y);
+        }
     });
 
     canvas.addEventListener("mouseup", function (e) {
         DRAWING = false;
     });
 
-    canvas.addEventListener("mousemove", function (e) {
+    canvas.addEventListener("mousemove", async function (e) {
         if (DRAWING){
             const coord = getMousePos(canvas, e, NUM_CELLS_X, NUM_CELLS_Y);
-            socket.send(JSON.stringify({
-                'type': 'fill_cell',
-                'x': coord.x,
-                'y': coord.y,
-                'color': '(0, 0, 0)'
-            }));
-            fillCell(coord.x, coord.y, '(0, 0, 0)', canvas, NUM_CELLS_X, NUM_CELLS_Y);
+            if (BOARD[coord.y][coord.x] !== CUR_COLOR){
+                BOARD[coord.y][coord.x] = CUR_COLOR
+                socket.send(JSON.stringify({
+                    'type': 'fill_cell',
+                    'x': coord.x,
+                    'y': coord.y,
+                    'color': CUR_COLOR
+                }));
+                fillCell(coord.x, coord.y, CUR_COLOR, canvas, NUM_CELLS_X, NUM_CELLS_Y);
+            }
         }
     });
 }
