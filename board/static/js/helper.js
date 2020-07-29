@@ -26,3 +26,16 @@ export const getCookie = (name) => {
     }
     return cookieValue;
 }
+
+export const getMousePos = (canvas, e, num_cells_x, num_cells_y) => {
+    var rect = canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+
+    var gridX = Math.floor(x / (rect.width / num_cells_x))
+    var gridY = Math.floor(y / (rect.height / num_cells_y))
+    return {
+        x: gridX,
+        y: gridY
+    };
+}
