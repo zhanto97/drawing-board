@@ -2,18 +2,23 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="{% static 'css/index.css' %}">
         <link rel="stylesheet" href="{% static 'css/canvas.css' %}">
         <title>Drawing Board</title>
+        <script src="{% static 'js/jscolor.js' %}"></script>
     </head>
 
-    <body>
+    <body class="Index">
 
-        <h1>This is a Heading</h1>
+        <h1>Welcome to the drawing board!</h1>
+        <p>
+            Color: <input id="color-picker" value="000000" data-jscolor="">
+        </p>
         
         <div id="canvas-div" class="Canvas">
             <canvas id="canvas-canvas" width=500 height=350>
         </div>
-
+        
         <script type="module">
             import {initialize} from "{% static 'js/index.js' %}"
             initialize();

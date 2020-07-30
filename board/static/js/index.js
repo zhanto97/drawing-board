@@ -5,7 +5,6 @@ var NUM_CELLS_X = null;
 var NUM_CELLS_Y = null;
 var BOARD = null;
 var DRAWING = false;
-var CUR_COLOR = '#000000'
 
 const initialize = async () => {
     const canvas = document.getElementById('canvas-canvas');
@@ -50,15 +49,16 @@ const setupDrawingListeners = (canvas, socket) => {
     canvas.addEventListener("mousedown", async function (e) {
         DRAWING = true;
         const coord = getMousePos(canvas, e, NUM_CELLS_X, NUM_CELLS_Y);
-        if (BOARD[coord.y][coord.x] !== CUR_COLOR){
-            BOARD[coord.y][coord.x] = CUR_COLOR
+        const colorPicker = document.getElementById('color-picker');
+        if (BOARD[coord.y][coord.x] !== colorPicker.value){
+            BOARD[coord.y][coord.x] = colorPicker.value
             socket.send(JSON.stringify({
                 'type': 'fill_cell',
                 'x': coord.x,
                 'y': coord.y,
-                'color': CUR_COLOR
+                'color': colorPicker.value
             }));
-            fillCell(coord.x, coord.y, CUR_COLOR, canvas, NUM_CELLS_X, NUM_CELLS_Y);
+            fillCell(coord.x, coord.y, colorPicker.value, canvas, NUM_CELLS_X, NUM_CELLS_Y);
         }
     });
 
@@ -69,15 +69,16 @@ const setupDrawingListeners = (canvas, socket) => {
     canvas.addEventListener("mousemove", async function (e) {
         if (DRAWING){
             const coord = getMousePos(canvas, e, NUM_CELLS_X, NUM_CELLS_Y);
-            if (BOARD[coord.y][coord.x] !== CUR_COLOR){
-                BOARD[coord.y][coord.x] = CUR_COLOR
+            const colorPicker = document.getElementById('color-picker');
+            if (BOARD[coord.y][coord.x] !== colorPicker.value){
+                BOARD[coord.y][coord.x] = colorPicker.value
                 socket.send(JSON.stringify({
                     'type': 'fill_cell',
                     'x': coord.x,
                     'y': coord.y,
-                    'color': CUR_COLOR
+                    'color': colorPicker.value
                 }));
-                fillCell(coord.x, coord.y, CUR_COLOR, canvas, NUM_CELLS_X, NUM_CELLS_Y);
+                fillCell(coord.x, coord.y, colorPicker.value, canvas, NUM_CELLS_X, NUM_CELLS_Y);
             }
         }
     });
