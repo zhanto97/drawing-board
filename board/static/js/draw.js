@@ -25,5 +25,5 @@ export const fillCell = (x, y, color, canvas, num_cells_x, num_cells_y) => {
     var grid_height = canvas.height / num_cells_y;
 
     context.fillStyle = color;
-    context.fillRect(x*grid_width, y*grid_height, grid_width, grid_height);
+    context.fillRect(x*grid_width, y*grid_height, grid_width - 1, grid_height - 1);
 }

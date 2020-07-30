@@ -1,5 +1,5 @@
 import {enhanceCanvasDPI, getMousePos} from './helper.js';
-import {drawLines, fillCell} from './draw.js'
+import {drawLines, fillCell} from './draw.js';
 
 var NUM_CELLS_X = null;
 var NUM_CELLS_Y = null;
